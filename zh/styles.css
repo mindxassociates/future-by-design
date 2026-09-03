@@ -916,3 +916,24 @@ footer {
   .closing { display: block; }
   .alt { background: white !important; }
 }
++
+
+/* Compact tools and interactive key-point cards */
+.tools{align-items:start}
+.score-box{grid-template-columns:minmax(0,1fr) auto}
+.score-box strong{white-space:nowrap;justify-self:end}
+.score-box p{grid-column:1/-1;overflow-wrap:anywhere}
+.key-card{padding:0;overflow:hidden;align-self:start;transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+.key-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.key-card[open]{border-color:var(--ink);box-shadow:var(--shadow)}
+.key-card summary{list-style:none;padding:18px;cursor:pointer}
+.key-card summary::-webkit-details-marker{display:none}
+.key-card summary small{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:var(--muted);font-weight:750}
+.key-card summary small b{font-size:1.2rem;transition:transform .2s ease}
+.key-card[open] summary small b{transform:rotate(45deg)}
+.key-card-body{padding:0 18px 18px;border-top:1px solid var(--line)}
+.key-card-body>p{padding-top:16px}
+.key-action{margin-top:14px;padding:13px 14px;border-radius:12px;background:var(--cream);border-left:4px solid var(--coral)}
+.key-action strong{font-size:.78rem;letter-spacing:.05em}
+.key-action p{margin-top:4px;color:var(--ink)}
+@media(max-width:560px){.score-box{grid-template-columns:1fr auto}.score-box strong{font-size:1.45rem}.key-card summary{padding:16px}.key-card-body{padding:0 16px 16px}}
