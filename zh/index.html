@@ -9,6 +9,12 @@
   <style>
     footer{align-items:flex-end;gap:28px}footer p{margin:.35rem 0}.developer-credit{white-space:nowrap;font-weight:750}.developer-credit a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:3px}.developer-credit a:hover,.developer-credit a:focus-visible{color:#b54a38}
     @media(max-width:820px){.developer-credit{margin-top:1rem;white-space:normal}}
+    .lang-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:#fff;flex-shrink:0}
+    .lang-switch button{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:5px 9px;min-height:32px;font:inherit;font-size:.78rem;font-weight:800;line-height:1;cursor:pointer;white-space:nowrap}
+    .lang-switch button[aria-pressed="true"]{background:var(--ink);color:#fff}
+    .lang-switch button:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+    @media(max-width:820px){.topbar{gap:9px}.brand{margin-right:auto}.lang-switch button{padding:5px 8px}.menu{order:3}.lang-switch{order:2}}
+    @media(max-width:430px){.brand>span:last-child{display:none}.brandmark{width:34px;height:34px}.lang-switch button{font-size:.74rem;padding:5px 7px}.menu{padding:6px 11px}}
     #printView{display:none}
     @media print{
       @page{size:letter;margin:.58in .62in .65in}
@@ -45,6 +51,10 @@
     <nav id="nav" aria-label="主导航">
       <a href="#journey">探索之旅</a><a href="#toolkit">工具箱</a><a href="#library">核心要点</a><a href="#quiz">测验</a>
     </nav>
+    <div class="lang-switch" role="group" aria-label="中文字体">
+      <button type="button" id="langZhs" aria-pressed="true">简体</button>
+      <button type="button" id="langZht" aria-pressed="false">繁體</button>
+    </div>
     <div class="progress-pill" aria-label="课程进度"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
   </header>
 
@@ -110,5 +120,122 @@
   <div id="printView" aria-hidden="true"></div>
   <footer><div><p>一个用于个人思考、教练辅导和技能提升的独立教育资源。</p><p>你的输入内容和学习进度仅会保存在当前设备的浏览器中。</p></div><p class="developer-credit">由 <a href="https://mindx.us/zh/" target="_blank" rel="noopener noreferrer">Mind X 社区</a> 开发</p></footer>
   <script src="app.js?v=20260906-quiz-fix-2"></script>
+  <script>
+  (()=>{
+    const STORAGE_KEY='futureByDesignChineseScript';
+    const textOriginals=new WeakMap();
+    const attrOriginals=new WeakMap();
+    let current='zhs';
+    let observer;
+
+    const phrases=[
+      ['设计未来','設計未來'],['互动式','互動式'],['个人成长','個人成長'],['长期主义','長期主義'],['复利效应','複利效應'],
+      ['打印 / 保存','列印 / 儲存'],['打印','列印'],['保存','儲存'],['浏览器','瀏覽器'],['搜索','搜尋'],['点击展开','點擊展開'],
+      ['模块','模組'],['菜单','選單'],['主导航','主導覽'],['课程进度','課程進度'],['重置进度','重設進度'],['链接','連結'],
+      ['反馈','回饋'],['信息','資訊'],['日历','日曆'],['履历','履歷'],['社交圈','社交圈'],['人脉','人脈'],['网络','網路'],
+      ['当前','目前'],['现在','現在'],['数据','資料'],['资料信息','資料資訊'],['文件','檔案'],['默认','預設'],['加载','載入'],
+      ['输入内容','輸入內容'],['设备','裝置'],['开发','開發'],['社区','社區'],['教练辅导','教練輔導'],['技能提升','技能提升'],
+      ['微行动','微行動'],['行动','行動'],['选择权','選擇權'],['选择','選擇'],['尝试','嘗試'],['学习','學習'],['创造','創造'],
+      ['关系','關係'],['测试','測試'],['计划','計畫'],['规划','規劃'],['项目','專案'],['质量','品質'],['结果','結果'],
+      ['范围','範圍'],['标准','標準'],['实现','實現'],['建议','建議'],['经验','經驗'],['认识','認識'],['明确','明確'],
+      ['继续','繼續'],['记录','記錄'],['回应','回應'],['开放','開放'],['图','圖'],['页面','頁面']
+    ];
+    const chars={
+      '万':'萬','与':'與','专':'專','业':'業','东':'東','丝':'絲','两':'兩','严':'嚴','丧':'喪','个':'個','临':'臨','为':'為','举':'舉','义':'義','乌':'烏','乐':'樂','乔':'喬','习':'習','乡':'鄉','书':'書','买':'買','乱':'亂','争':'爭','于':'於','亏':'虧','云':'雲','亚':'亞','产':'產','亩':'畝','亲':'親','亵':'褻','仅':'僅','从':'從','仓':'倉','仪':'儀','们':'們','价':'價','众':'眾','优':'優','会':'會','伞':'傘','伟':'偉','传':'傳','伤':'傷','伦':'倫','体':'體','余':'餘','侠':'俠','侣':'侶','侥':'僥','侧':'側','侨':'僑','侦':'偵','俩':'倆','俭':'儉','债':'債','倾':'傾','偿':'償','储':'儲','儿':'兒','兑':'兌','党':'黨','兰':'蘭','关':'關','兴':'興','养':'養','兽':'獸','冈':'岡','册':'冊','写':'寫','军':'軍','农':'農','冲':'衝','决':'決','况':'況','冻':'凍','净':'淨','减':'減','凑':'湊','几':'幾','凤':'鳳','凭':'憑','凯':'凱','击':'擊','划':'劃','刘':'劉','则':'則','刚':'剛','创':'創','删':'刪','别':'別','刹':'剎','剂':'劑','剑':'劍','剧':'劇','办':'辦','务':'務','动':'動','励':'勵','劳':'勞','势':'勢','勋':'勳','匀':'勻','区':'區','医':'醫','华':'華','协':'協','单':'單','卖':'賣','卢':'盧','卫':'衛','却':'卻','厂':'廠','厅':'廳','历':'歷','压':'壓','厌':'厭','县':'縣','参':'參','双':'雙','发':'發','变':'變','叙':'敘','叠':'疊','叶':'葉','号':'號','叹':'嘆','后':'後','吕':'呂','吗':'嗎','听':'聽','启':'啟','吴':'吳','员':'員','呛':'嗆','呜':'嗚','咏':'詠','咙':'嚨','咸':'鹹','响':'響','哑':'啞','哗':'嘩','唤':'喚','啧':'嘖','喷':'噴','团':'團','园':'園','围':'圍','国':'國','图':'圖','圆':'圓','圣':'聖','场':'場','坏':'壞','块':'塊','坚':'堅','坛':'壇','坝':'壩','垫':'墊','执':'執','扩':'擴','扫':'掃','扬':'揚','扰':'擾','抚':'撫','抛':'拋','护':'護','报':'報','拟':'擬','拥':'擁','择':'擇','挂':'掛','挚':'摯','挛':'攣','挤':'擠','挥':'揮','损':'損','换':'換','据':'據','掳':'擄','掺':'摻','揽':'攬','搀':'攙','搁':'擱','携':'攜','摄':'攝','摆':'擺','摇':'搖','摊':'攤','撑':'撐','撵':'攆','敌':'敵','数':'數','敛':'斂','斋':'齋','斩':'斬','断':'斷','无':'無','旧':'舊','时':'時','晋':'晉','晒':'曬','晓':'曉','暂':'暫','术':'術','朴':'樸','机':'機','杀':'殺','杂':'雜','权':'權','条':'條','来':'來','杨':'楊','杰':'傑','极':'極','构':'構','枢':'樞','标':'標','样':'樣','树':'樹','桥':'橋','检':'檢','楼':'樓','欢':'歡','欧':'歐','歼':'殲','残':'殘','毁':'毀','毕':'畢','气':'氣','汇':'匯','汉':'漢','汤':'湯','沟':'溝','没':'沒','泽':'澤','洁':'潔','浅':'淺','济':'濟','浏':'瀏','测':'測','浑':'渾','浓':'濃','涛':'濤','涂':'塗','涌':'湧','润':'潤','涨':'漲','涩':'澀','渊':'淵','温':'溫','湾':'灣','湿':'濕','溃':'潰','滚':'滾','满':'滿','滤':'濾','滥':'濫','滨':'濱','滩':'灘','灵':'靈','灾':'災','炉':'爐','点':'點','炼':'煉','热':'熱','爱':'愛','爷':'爺','牵':'牽','状':'狀','狭':'狹','独':'獨','猎':'獵','玛':'瑪','环':'環','现':'現','琐':'瑣','电':'電','画':'畫','畅':'暢','疗':'療','痒':'癢','疯':'瘋','皱':'皺','盖':'蓋','监':'監','盘':'盤','眯':'瞇','睁':'睜','瞒':'瞞','矫':'矯','矿':'礦','码':'碼','砖':'磚','礼':'禮','祷':'禱','离':'離','种':'種','积':'積','称':'稱','稳':'穩','穷':'窮','竞':'競','笔':'筆','筛':'篩','简':'簡','签':'簽','类':'類','粮':'糧','紧':'緊','纠':'糾','红':'紅','约':'約','级':'級','纪':'紀','纯':'純','纲':'綱','纳':'納','纵':'縱','纷':'紛','纸':'紙','纹':'紋','纽':'紐','线':'線','练':'練','组':'組','细':'細','织':'織','终':'終','绍':'紹','经':'經','绑':'綁','结':'結','绕':'繞','绘':'繪','给':'給','络':'絡','绝':'絕','统':'統','绳':'繩','维':'維','综':'綜','绿':'綠','缓':'緩','编':'編','缘':'緣','缩':'縮','缴':'繳','网':'網','罗':'羅','罚':'罰','职':'職','联':'聯','聪':'聰','肠':'腸','肤':'膚','肿':'腫','脑':'腦','脸':'臉','腻':'膩','腾':'騰','舆':'輿','舰':'艦','艺':'藝','节':'節','范':'範','茎':'莖','荐':'薦','药':'藥','获':'獲','营':'營','萧':'蕭','蓝':'藍','虚':'虛','虫':'蟲','补':'補','装':'裝','裤':'褲','见':'見','观':'觀','规':'規','览':'覽','觉':'覺','触':'觸','计':'計','订':'訂','认':'認','讨':'討','让':'讓','训':'訓','议':'議','讯':'訊','记':'記','讲':'講','许':'許','论':'論','设':'設','访':'訪','证':'證','评':'評','词':'詞','试':'試','诗':'詩','该':'該','详':'詳','语':'語','误':'誤','说':'說','请':'請','读':'讀','谁':'誰','调':'調','谈':'談','谋':'謀','谢':'謝','谣':'謠','谱':'譜','贝':'貝','负':'負','贡':'貢','财':'財','责':'責','败':'敗','账':'賬','货':'貨','质':'質','贩':'販','贫':'貧','购':'購','贯':'貫','贴':'貼','贵':'貴','贷':'貸','贸':'貿','费':'費','贺':'賀','贼':'賊','资':'資','赋':'賦','赌':'賭','赞':'讚','赢':'贏','赵':'趙','赶':'趕','趋':'趨','跃':'躍','车':'車','轨':'軌','转':'轉','轮':'輪','软':'軟','轰':'轟','轻':'輕','载':'載','较':'較','辆':'輛','辈':'輩','辅':'輔','输':'輸','辖':'轄','辩':'辯','边':'邊','辽':'遼','达':'達','迁':'遷','过':'過','运':'運','还':'還','这':'這','进':'進','远':'遠','违':'違','连':'連','迟':'遲','适':'適','选':'選','遗':'遺','邮':'郵','邻':'鄰','郑':'鄭','释':'釋','里':'裡','鉴':'鑑','针':'針','钟':'鐘','钢':'鋼','钥':'鑰','钱':'錢','钻':'鑽','铁':'鐵','铃':'鈴','铜':'銅','铭':'銘','银':'銀','铺':'鋪','链':'鏈','销':'銷','锁':'鎖','错':'錯','键':'鍵','锻':'鍛','长':'長','门':'門','问':'問','间':'間','闭':'閉','闲':'閒','闻':'聞','阅':'閱','队':'隊','阳':'陽','阴':'陰','阵':'陣','阶':'階','际':'際','陆':'陸','陈':'陳','险':'險','随':'隨','隐':'隱','难':'難','雏':'雛','杂':'雜','静':'靜','顶':'頂','项':'項','顺':'順','须':'須','顾':'顧','顿':'頓','预':'預','领':'領','频':'頻','题':'題','额':'額','颜':'顏','风':'風','飞':'飛','饭':'飯','饮':'飲','馆':'館','马':'馬','验':'驗','骑':'騎','骗':'騙','骚':'騷','鱼':'魚','鸡':'雞','鸣':'鳴','鸭':'鴨','鹅':'鵝','麦':'麥','黄':'黃','齐':'齊','龄':'齡','龙':'龍'
+    };
+
+    function toTraditional(input){
+      let out=input;
+      for(const [from,to] of phrases) out=out.split(from).join(to);
+      return out.replace(/[\u3400-\u9fff]/g,ch=>chars[ch]||ch);
+    }
+
+    function ignoredTextNode(node){
+      const parent=node.parentElement;
+      if(!parent || !node.nodeValue.trim()) return true;
+      if(parent.closest('.lang-switch')) return true;
+      return ['SCRIPT','STYLE','TEXTAREA','INPUT','OPTION'].includes(parent.tagName);
+    }
+
+    function walkText(root,fn){
+      if(root.nodeType===Node.TEXT_NODE){if(!ignoredTextNode(root))fn(root);return;}
+      if(root.nodeType!==Node.ELEMENT_NODE && root.nodeType!==Node.DOCUMENT_FRAGMENT_NODE && root.nodeType!==Node.DOCUMENT_NODE)return;
+      const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>ignoredTextNode(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+      let n;while((n=walker.nextNode()))fn(n);
+    }
+
+    function rememberAttrs(el){
+      if(attrOriginals.has(el))return attrOriginals.get(el);
+      const saved={};
+      ['placeholder','aria-label','title'].forEach(name=>{if(el.hasAttribute(name))saved[name]=el.getAttribute(name)});
+      attrOriginals.set(el,saved);return saved;
+    }
+
+    function applyElementAttrs(root,mode){
+      const elements=[];
+      if(root.nodeType===Node.ELEMENT_NODE)elements.push(root);
+      if(root.querySelectorAll)elements.push(...root.querySelectorAll('[placeholder],[aria-label],[title]'));
+      elements.forEach(el=>{
+        if(el.closest && el.closest('.lang-switch'))return;
+        const saved=rememberAttrs(el);
+        Object.entries(saved).forEach(([name,value])=>el.setAttribute(name,mode==='zht'?toTraditional(value):value));
+      });
+    }
+
+    function applyRoot(root,mode,{refreshOriginal=false}={}){
+      if(observer)observer.disconnect();
+      walkText(root,node=>{
+        if(refreshOriginal || !textOriginals.has(node))textOriginals.set(node,node.nodeValue);
+        const original=textOriginals.get(node);
+        node.nodeValue=mode==='zht'?toTraditional(original):original;
+      });
+      applyElementAttrs(root,mode);
+      if(observer)observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+    }
+
+    function setLanguage(mode,persist=true){
+      current=mode==='zht'?'zht':'zhs';
+      document.documentElement.lang=current==='zht'?'zh-Hant':'zh-CN';
+      document.querySelector('#langZhs').setAttribute('aria-pressed',String(current==='zhs'));
+      document.querySelector('#langZht').setAttribute('aria-pressed',String(current==='zht'));
+      applyRoot(document.body,current);
+      const title='设计未来 — 互动式个人成长指南';
+      const desc='一份互动式指南，帮助你创造生活留白、明确核心事项、聪明地开展实验，并持续取得长足进步。';
+      document.title=current==='zht'?toTraditional(title):title;
+      document.querySelector('meta[name="description"]').setAttribute('content',current==='zht'?toTraditional(desc):desc);
+      if(persist)try{localStorage.setItem(STORAGE_KEY,current)}catch{}
+      window.dispatchEvent(new CustomEvent('futureByDesignLanguageChange',{detail:{language:current}}));
+    }
+
+    observer=new MutationObserver(mutations=>{
+      if(current!=='zht')return;
+      observer.disconnect();
+      for(const mutation of mutations){
+        if(mutation.type==='characterData'){
+          const node=mutation.target;
+          if(ignoredTextNode(node))continue;
+          textOriginals.set(node,node.nodeValue);
+          node.nodeValue=toTraditional(node.nodeValue);
+        }else{
+          mutation.addedNodes.forEach(node=>{
+            if(node.nodeType===Node.TEXT_NODE){
+              if(!ignoredTextNode(node)){textOriginals.set(node,node.nodeValue);node.nodeValue=toTraditional(node.nodeValue)}
+            }else if(node.nodeType===Node.ELEMENT_NODE){
+              walkText(node,text=>{textOriginals.set(text,text.nodeValue);text.nodeValue=toTraditional(text.nodeValue)});
+              applyElementAttrs(node,'zht');
+            }
+          });
+        }
+      }
+      observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+    });
+    observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+
+    document.querySelector('#langZhs').addEventListener('click',()=>setLanguage('zhs'));
+    document.querySelector('#langZht').addEventListener('click',()=>setLanguage('zht'));
+    let saved='zhs';try{saved=localStorage.getItem(STORAGE_KEY)==='zht'?'zht':'zhs'}catch{}
+    setLanguage(saved,false);
+  })();
+  </script>
 </body>
 </html>
